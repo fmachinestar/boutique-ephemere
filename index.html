@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boutique Éphémère</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #fafafa;
+      padding: 20px;
+    }
+    .product {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      max-width: 400px;
+    }
+    .product h2 { margin-top: 0; }
+    .sizes button {
+      margin: 5px;
+      padding: 10px;
+    }
+    .stock {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .buy-btn {
+      margin-top: 10px;
+      display: inline-block;
+      padding: 10px 20px;
+      background: #333;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .out-of-stock {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Boutique Éphémère - Accès Privé WhatsApp</h1>
+
+  <div class="product">
+    <h2>Live Privé WhatsApp - Session du jour</h2>
+    <p>Choisissez votre taille d'accès :</p>
+    <div class="sizes">
+      <button onclick="selectSize('S')">Taille S (20 EUR)</button>
+      <button onclick="selectSize('M')">Taille M (25 EUR)</button>
+      <button onclick="selectSize('L')">Taille L (30 EUR)</button>
+    </div>
+    <div class="stock" id="stock">Stock restant : --</div>
+    <a id="buyLink" class="buy-btn" href="#" target="_blank" style="display:none;">Acheter maintenant</a>
+  </div>
+
+  <script>
+    const stockBySize = {
+      S: 3,
+      M: 2,
+      L: 1
+    };
+
+    const paymentLinks = {
+      S: "https://nowpayments.io/payment/?iid=4369724846",
+      M: "https://nowpayments.io/payment/?iid=XXXXXXXXXX",
+      L: "https://nowpayments.io/payment/?iid=YYYYYYYYYY"
+    };
+
+    function selectSize(size) {
+      const stock = stockBySize[size];
+      const stockText = document.getElementById("stock");
+      const buyBtn = document.getElementById("buyLink");
+
+      if (stock > 0) {
+        stockText.innerText = `Stock restant : ${stock}`;
+        buyBtn.href = paymentLinks[size];
+        buyBtn.style.display = "inline-block";
+        buyBtn.classList.remove("out-of-stock");
+      } else {
+        stockText.innerText = "Rupture de stock";
+        buyBtn.style.display = "none";
+        buyBtn.classList.add("out-of-stock");
+      }
+    }
+  </script>
+</body>
+</html>

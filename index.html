@@ -1,90 +1,415 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Boutique Éphémère</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #fafafa;
-      padding: 20px;
-    }
-    .product {
-      background: #fff;
-      padding: 20px;
-      margin-bottom: 20px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      max-width: 400px;
-    }
-    .product h2 { margin-top: 0; }
-    .sizes button {
-      margin: 5px;
-      padding: 10px;
-    }
-    .stock {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .buy-btn {
-      margin-top: 10px;
-      display: inline-block;
-      padding: 10px 20px;
-      background: #333;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-    .out-of-stock {
-      color: red;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ephemeral Perfume Boutique</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom CSS for the modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: modalFadeIn 0.3s;
+        }
+        
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-btn:hover {
+            color: black;
+        }
+        
+        /* Custom checkbox for filter */
+        .filter-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            position: relative;
+            margin-right: 0.5rem;
+        }
+        
+        .filter-checkbox:checked {
+            background-color: #6b7280;
+            border-color: #6b7280;
+        }
+        
+        .filter-checkbox:checked::after {
+            content: "✓";
+            position: absolute;
+            color: white;
+            font-size: 0.8rem;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Custom select dropdown */
+        .custom-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1rem;
+        }
+    </style>
 </head>
-<body>
-  <h1>Boutique Éphémère - Accès Privé WhatsApp</h1>
-
-  <div class="product">
-    <h2>Live Privé WhatsApp - Session du jour</h2>
-    <p>Choisissez votre taille d'accès :</p>
-    <div class="sizes">
-      <button onclick="selectSize('S')">Taille S (20 EUR)</button>
-      <button onclick="selectSize('M')">Taille M (25 EUR)</button>
-      <button onclick="selectSize('L')">Taille L (30 EUR)</button>
+<body class="bg-gray-50 font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-12 text-center">
+            <h1 class="text-3xl md:text-4xl font-light text-gray-800 mb-2">Ephemeral Perfume Boutique</h1>
+            <p class="text-gray-600">Limited edition fragrances - available for a short time only</p>
+        </header>
+        
+        <!-- Filter/Sort Bar -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-700">Filter:</span>
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" class="filter-checkbox" data-filter="in-stock">
+                    <span class="text-gray-700">In stock only</span>
+                </label>
+            </div>
+            
+            <div class="flex items-center">
+                <span class="text-gray-700 mr-2">Sort by:</span>
+                <select id="sort-select" class="custom-select bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                    <option value="default">Default</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="name-asc">Name: A-Z</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Products Grid -->
+        <div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Products will be inserted here by JavaScript -->
+        </div>
     </div>
-    <div class="stock" id="stock">Stock restant : --</div>
-    <a id="buyLink" class="buy-btn" href="#" target="_blank" style="display:none;">Acheter maintenant</a>
-  </div>
-
-  <script>
-    const stockBySize = {
-      S: 3,
-      M: 2,
-      L: 1
-    };
-
-    const paymentLinks = {
-      S: "https://nowpayments.io/payment/?iid=4369724846",
-      M: "https://nowpayments.io/payment/?iid=XXXXXXXXXX",
-      L: "https://nowpayments.io/payment/?iid=YYYYYYYYYY"
-    };
-
-    function selectSize(size) {
-      const stock = stockBySize[size];
-      const stockText = document.getElementById("stock");
-      const buyBtn = document.getElementById("buyLink");
-
-      if (stock > 0) {
-        stockText.innerText = `Stock restant : ${stock}`;
-        buyBtn.href = paymentLinks[size];
-        buyBtn.style.display = "inline-block";
-        buyBtn.classList.remove("out-of-stock");
-      } else {
-        stockText.innerText = "Rupture de stock";
-        buyBtn.style.display = "none";
-        buyBtn.classList.add("out-of-stock");
-      }
-    }
-  </script>
+    
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 class="text-xl font-semibold mb-4">Complete Your Purchase</h2>
+            
+            <form id="checkout-form" class="space-y-4">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <input type="text" id="name" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400">
+                </div>
+                
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="email" name="email" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400">
+                </div>
+                
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400">
+                </div>
+                
+                <div>
+                    <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Shipping Address</label>
+                    <textarea id="address" name="address" rows="3" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"></textarea>
+                </div>
+                
+                <div>
+                    <label for="comments" class="block text-sm font-medium text-gray-700 mb-1">Special Instructions</label>
+                    <textarea id="comments" name="comments" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"></textarea>
+                </div>
+                
+                <div class="pt-4 border-t border-gray-200">
+                    <div class="flex justify-between mb-2">
+                        <span class="font-medium">Product:</span>
+                        <span id="modal-product-name" class="text-gray-700"></span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="font-medium">Quantity:</span>
+                        <span id="modal-product-quantity" class="text-gray-700"></span>
+                    </div>
+                    <div class="flex justify-between text-lg font-semibold">
+                        <span>Total:</span>
+                        <span id="modal-product-total" class="text-gray-800"></span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full bg-gray-800 text-white py-3 px-4 rounded hover:bg-gray-700 transition duration-200 flex items-center justify-center">
+                    <i class="fab fa-paypal mr-2"></i> Proceed to PayPal
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Product data - each product is an object with properties
+        const products = [
+            {
+                id: 1,
+                name: "Midnight Whisper",
+                description: "A mysterious blend of oud, vanilla, and amber that lingers like a secret.",
+                price: 89.99,
+                stock: 10,
+                image: "https://images.unsplash.com/photo-1615634264147-200a90acc5d1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 2,
+                name: "Ocean Breeze",
+                description: "Fresh aquatic notes with citrus top notes and a woody base. Perfect for summer.",
+                price: 75.50,
+                stock: 5,
+                image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 3,
+                name: "Velvet Rose",
+                description: "Luxurious rose absolute blended with peony and a hint of spice. Elegant and timeless.",
+                price: 110.00,
+                stock: 0, // Out of stock
+                image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 4,
+                name: "Citrus Zest",
+                description: "Energetic blend of bergamot, lemon, and grapefruit with a hint of mint.",
+                price: 65.00,
+                stock: 8,
+                image: "https://images.unsplash.com/photo-1615634264147-200a90acc5d1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 5,
+                name: "Woodland Mystique",
+                description: "Earthy patchouli, cedarwood, and vetiver create a deep, sensual fragrance.",
+                price: 95.00,
+                stock: 3,
+                image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 6,
+                name: "Vanilla Dream",
+                description: "Warm vanilla bean with tonka and caramel notes for a comforting embrace.",
+                price: 82.00,
+                stock: 12,
+                image: "https://images.unsplash.com/photo-1615634264147-200a90acc5d1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            }
+        ];
+        
+        // DOM elements
+        const productsContainer = document.getElementById('products-container');
+        const checkoutModal = document.getElementById('checkout-modal');
+        const closeBtn = document.querySelector('.close-btn');
+        const checkoutForm = document.getElementById('checkout-form');
+        const modalProductName = document.getElementById('modal-product-name');
+        const modalProductQuantity = document.getElementById('modal-product-quantity');
+        const modalProductTotal = document.getElementById('modal-product-total');
+        const filterCheckbox = document.querySelector('[data-filter="in-stock"]');
+        const sortSelect = document.getElementById('sort-select');
+        
+        // Current selected product for checkout
+        let currentProduct = null;
+        let currentQuantity = 1;
+        
+        // Initialize the app
+        function init() {
+            renderProducts(products);
+            setupEventListeners();
+        }
+        
+        // Render products to the page
+        function renderProducts(productsToRender) {
+            productsContainer.innerHTML = '';
+            
+            productsToRender.forEach(product => {
+                const productCard = createProductCard(product);
+                productsContainer.appendChild(productCard);
+            });
+        }
+        
+        // Create a product card HTML element
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-200 flex flex-col';
+            
+            // Product image
+            const imageHTML = `
+                <div class="h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
+                </div>
+            `;
+            
+            // Product info
+            const infoHTML = `
+                <div class="p-6 flex-grow flex flex-col">
+                    <h3 class="text-xl font-medium text-gray-800 mb-2">${product.name}</h3>
+                    <p class="text-gray-600 mb-4 flex-grow">${product.description}</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-2xl font-light text-gray-800">€${product.price.toFixed(2)}</span>
+                        ${product.stock > 0 ? 
+                            `<span class="text-sm text-green-600">${product.stock} in stock</span>` : 
+                            `<span class="text-sm text-red-600">Out of stock</span>`}
+                    </div>
+            `;
+            
+            // Quantity selector (only if in stock)
+            let quantityHTML = '';
+            if (product.stock > 0) {
+                quantityHTML = `
+                    <div class="mb-4">
+                        <label for="quantity-${product.id}" class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                        <select id="quantity-${product.id}" class="custom-select w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                            ${Array.from({length: Math.min(10, product.stock)}, (_, i) => 
+                                `<option value="${i+1}">${i+1}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+            
+            // Buy button (disabled if out of stock)
+            const buttonHTML = `
+                <button 
+                    id="buy-${product.id}" 
+                    class="w-full py-2 px-4 rounded transition duration-200 
+                    ${product.stock > 0 ? 
+                        'bg-gray-800 text-white hover:bg-gray-700' : 
+                        'bg-gray-300 text-gray-500 cursor-not-allowed'}"
+                    ${product.stock === 0 ? 'disabled' : ''}
+                >
+                    ${product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                </button>
+            `;
+            
+            card.innerHTML = imageHTML + infoHTML + quantityHTML + buttonHTML + `</div>`;
+            
+            // Add event listener to the buy button if in stock
+            if (product.stock > 0) {
+                const buyButton = card.querySelector(`#buy-${product.id}`);
+                buyButton.addEventListener('click', () => openCheckoutModal(product));
+            }
+            
+            return card;
+        }
+        
+        // Open checkout modal with product details
+        function openCheckoutModal(product) {
+            currentProduct = product;
+            const quantitySelect = document.getElementById(`quantity-${product.id}`);
+            currentQuantity = parseInt(quantitySelect.value);
+            
+            // Update modal content
+            modalProductName.textContent = product.name;
+            modalProductQuantity.textContent = currentQuantity;
+            modalProductTotal.textContent = `€${(product.price * currentQuantity).toFixed(2)}`;
+            
+            // Show modal
+            checkoutModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Close checkout modal
+        function closeCheckoutModal() {
+            checkoutModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Close modal when clicking X or outside
+            closeBtn.addEventListener('click', closeCheckoutModal);
+            window.addEventListener('click', (e) => {
+                if (e.target === checkoutModal) {
+                    closeCheckoutModal();
+                }
+            });
+            
+            // Form submission (redirect to PayPal)
+            checkoutForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // In a real app, you would send this data to your server
+                // For this demo, we'll just redirect to PayPal with the product info
+                const total = (currentProduct.price * currentQuantity).toFixed(2);
+                const paypalUrl = `https://paypal.com/pay?product=${encodeURIComponent(currentProduct.name)}&amount=${total}`;
+                
+                // Redirect to PayPal (in a real app, you might want to submit the form data first)
+                window.location.href = paypalUrl;
+            });
+            
+            // Filter checkbox change
+            filterCheckbox.addEventListener('change', () => {
+                applyFiltersAndSort();
+            });
+            
+            // Sort select change
+            sortSelect.addEventListener('change', () => {
+                applyFiltersAndSort();
+            });
+        }
+        
+        // Apply filters and sorting
+        function applyFiltersAndSort() {
+            let filteredProducts = [...products];
+            
+            // Apply in-stock filter if checked
+            if (filterCheckbox.checked) {
+                filteredProducts = filteredProducts.filter(product => product.stock > 0);
+            }
+            
+            // Apply sorting
+            const sortValue = sortSelect.value;
+            switch (sortValue) {
+                case 'price-asc':
+                    filteredProducts.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-desc':
+                    filteredProducts.sort((a, b) => b.price - a.price);
+                    break;
+                case 'name-asc':
+                    filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                default:
+                    // Default sorting (by original order)
+                    filteredProducts.sort((a, b) => a.id - b.id);
+            }
+            
+            renderProducts(filteredProducts);
+        }
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>

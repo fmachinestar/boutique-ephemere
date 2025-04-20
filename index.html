@@ -84,6 +84,14 @@
             background-position: right 0.5rem center;
             background-size: 1rem;
         }
+
+                      .zoom-hover img {
+                transition: transform 0.3s ease;
+              }
+
+              .zoom-hover:hover img {
+                transform: scale(1.05);
+              }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -118,13 +126,6 @@
         <!-- Products Grid -->
         <div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Products will be inserted here by JavaScript -->
-              .zoom-hover img {
-                transition: transform 0.3s ease;
-              }
-
-              .zoom-hover:hover img {
-                transform: scale(1.05);
-              }
         </div>
     </div>
     
